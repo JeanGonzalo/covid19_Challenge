@@ -40,7 +40,7 @@ class _WalletAppState extends State<WalletApp> {
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), title: Text("Home")),
           BottomNavigationBarItem(
-              icon: Icon(Icons.credit_card), title: Text("Card")),
+              icon: Icon(Icons.credit_card), title: Text("Statistics")),
         ],
         onTap: (index) {
           setState(() {
@@ -53,7 +53,7 @@ class _WalletAppState extends State<WalletApp> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
         elevation: 0,
-        child: Icon(Icons.add),
+        child: Icon(Icons.home),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: screens[selectedTab],

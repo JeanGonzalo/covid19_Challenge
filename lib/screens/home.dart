@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:covid19_flutter/models/countries.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -15,17 +16,40 @@ class _HomeScreenState extends State<HomeScreen> {
   bool loading;
 
   List<User> users;
+  List<Countries> countries;
 
   @override
   void initState() {
     users = [];
+    countries = [];
     loading = true;
 
-    _loadUsers();
+    //_loadUsers();
+    _loadCountries();
     super.initState();
   }
 
-  void _loadUsers() async {
+  void _loadCountries() async {
+    final url = 'https://api.covid19api.com/summary';
+    final response = await http.get(url);
+    final json = jsonDecode(response.body);
+
+    List<Countries> _country = [];
+    for (var jsonCountries in json['Countries']) {
+      _country.add(Countries.fromJson(jsonCountries));
+    }
+
+    setState(() {
+      countries = _country;
+      var sorted = countries
+          .map((country) =>
+              '============> ${country.country} ${country.countryCode} ${country.totalConfirmed} ')
+          .toList();
+      print(sorted);
+    });
+  }
+
+/*   void _loadUsers() async {
     final url = 'https://randomuser.me/api/?results=20';
     final response = await http.get(url);
     final json = jsonDecode(response.body);
@@ -44,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
       //debugPrint('aqui esta la data => $users');
       loading = false;
     });
-  }
+  } */
 
   void _higher() async {
     setState(() {
@@ -315,14 +339,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                         CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
-                                        users[index].name,
+                                        countries[index].country,
                                         style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.w700,
                                             color: Colors.grey[900]),
                                       ),
                                       Text(
-                                        users[index].subtitle,
+                                        countries[index].countryCode,
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.w700,
@@ -335,14 +359,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: <Widget>[
                                     Text(
-                                      users[index].age.toString(),
+                                      countries[index]
+                                          .totalConfirmed
+                                          .toString(),
                                       style: TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w700,
                                           color: Colors.lightGreen),
                                     ),
                                     Text(
-                                      "26 Jan",
+                                      "Total Confirmed",
                                       style: TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w700,
@@ -355,7 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                         shrinkWrap: true,
-                        itemCount: users.length,
+                        itemCount: countries.length,
                         padding: EdgeInsets.all(0),
                         controller: ScrollController(keepScrollOffset: false),
                       ),
