@@ -1,8 +1,16 @@
+import 'package:covid19_flutter/widgets/chart_container.dart';
 import 'package:flutter/material.dart';
 
 class Charts extends StatelessWidget {
+  String country = "Perú";
+  String countryCode = "PE";
+  String slug = "peru";
   @override
   Widget build(BuildContext context) {
+    final width = (MediaQuery.of(context).size.width);
+    //final widthToggleButton = (width - 75) * .5;
+    //final fontSizeCardTitle = width * .035;
+    final fontSizeCardNumber = width * .05;
     return Container(
       height: MediaQuery.of(context).size.height,
       width: double.infinity,
@@ -120,6 +128,10 @@ class Charts extends StatelessWidget {
                   SizedBox(
                     height: 16,
                   ),
+                  //chequearrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+                  Container(
+                    child: buildContainerChart(width, fontSizeCardNumber),
+                  ),
                 ],
               ),
             ),
@@ -133,6 +145,15 @@ class Charts extends StatelessWidget {
         initialChildSize: 0.95,
         maxChildSize: 0.95,
       ),
+    );
+  }
+
+  ContainerChart buildContainerChart(double width, double fontSizeCardNumber) {
+    return ContainerChart(
+      countryCode: countryCode,
+      fontSizeCardNumber: fontSizeCardNumber,
+      width: width,
+      slug: slug,
     );
   }
 }
