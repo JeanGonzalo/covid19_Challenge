@@ -4,8 +4,6 @@ import 'package:covid19_flutter/models/countries.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:covid19_flutter/models/users.dart';
-
 class HomeScreen extends StatefulWidget {
   //este es el nuevo codigo agregado
   @override
@@ -15,12 +13,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool loading;
 
-  List<User> users;
-  List<Countries> countries;
+  List<Country> countries;
 
   @override
   void initState() {
-    users = [];
     countries = [];
     loading = true;
 
@@ -30,55 +26,32 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _loadCountries() async {
-    final url = 'https://api.covid19api.com/summary';
-    final response = await http.get(url);
-    final json = jsonDecode(response.body);
+    final _url = 'https://api.covid19api.com/summary';
 
-    List<Countries> _country = [];
-    for (var jsonCountries in json['Countries']) {
-      _country.add(Countries.fromJson(jsonCountries));
+    final resp = await http.get(_url);
+    final decodedData = json.decode(resp.body);
+
+    List<Country> _data;
+    _data = [];
+    for (var item in decodedData['Countries']) {
+      _data.add(Country.fromJsonMap(item));
     }
 
     setState(() {
-      countries = _country;
-      var sorted = countries
-          .map((country) =>
-              '============> ${country.country} ${country.countryCode} ${country.totalConfirmed} ')
-          .toList();
-      print(sorted);
+      countries = _data;
+      countries.sort((a, b) => b.totalConfirmed - a.totalConfirmed);
     });
   }
 
-/*   void _loadUsers() async {
-    final url = 'https://randomuser.me/api/?results=20';
-    final response = await http.get(url);
-    final json = jsonDecode(response.body);
-    //debugPrint('aqui esta la data => $json');
-    //log('aqui esta la data => $json');
-    List<User> _users = [];
-    for (var jsonUser in json['results']) {
-      _users.add(User.fromJson(jsonUser));
-    }
-
-    print('esto ess GAAAAAAAAAAAAAAAAAAAA => $_users[0]');
-    //_users.sort((a,b) => a['age'])
-    //debugPrint('aqui esta la data => $_users');
-    setState(() {
-      users = _users;
-      //debugPrint('aqui esta la data => $users');
-      loading = false;
-    });
-  } */
-
   void _higher() async {
     setState(() {
-      users.sort((a, b) => a.age - b.age);
+      countries.sort((a, b) => b.totalConfirmed - a.totalConfirmed);
     });
   }
 
   void _less() async {
     setState(() {
-      users.sort((a, b) => b.age - a.age);
+      countries.sort((a, b) => a.totalConfirmed - b.totalConfirmed);
     });
   }
 
@@ -197,26 +170,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Row(
                           children: <Widget>[
                             Container(
-                              child: FlatButton(
-                                child: Text(
-                                  'here',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 14,
-                                    //color: Colors.grey[900],
-                                  ),
-                                ),
-                                //color: Colors.blue,
-                                onPressed: () {
-                                  _higher();
-                                },
-                                shape: StadiumBorder(),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 16,
-                            ),
-                            Container(
                               child: Row(
                                 children: <Widget>[
                                   CircleAvatar(
@@ -319,17 +272,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                     BorderRadius.all(Radius.circular(20))),
                             child: Row(
                               children: <Widget>[
-                                Container(
+                                /*  Container(
                                   decoration: BoxDecoration(
                                       color: Colors.grey[100],
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(18))),
                                   child: CircleAvatar(
                                     backgroundImage:
-                                        NetworkImage(users[index].img),
+                                        NetworkImage('aqui va imagen'),
                                   ),
                                   padding: EdgeInsets.all(12),
-                                ),
+                                ), */
                                 SizedBox(
                                   width: 16,
                                 ),
